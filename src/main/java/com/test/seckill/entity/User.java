@@ -39,7 +39,7 @@ public class User {
     /**
      * 头像
      */
-    private String head;
+    private String phone;
 
     /**
      * 注册时间

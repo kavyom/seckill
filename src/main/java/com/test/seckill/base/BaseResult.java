@@ -1,5 +1,6 @@
 package com.test.seckill.base;
 
+import com.test.seckill.common.RespBeanEnum;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -46,6 +47,10 @@ public class BaseResult<T> implements Serializable {
 
     public static <T> BaseResult<T> error(int code, String msg, T data) {
         return new BaseResult(code, msg, data);
+    }
+
+    public static <T> BaseResult<T> error(RespBeanEnum respBeanEnum) {
+        return new BaseResult(respBeanEnum.getCode(), respBeanEnum.getMessage());
     }
 
 }
