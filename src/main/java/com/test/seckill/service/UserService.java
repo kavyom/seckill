@@ -5,6 +5,9 @@ import com.test.seckill.base.BaseResult;
 import com.test.seckill.entity.User;
 import com.test.seckill.vo.LoginVo;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * <p>
  * 用户表 服务类
@@ -19,5 +22,5 @@ public interface UserService extends IService<User> {
      * @param loginVo
      * @return
      */
-    BaseResult login(LoginVo loginVo);
+    BaseResult login(HttpServletRequest request, HttpServletResponse response, LoginVo loginVo);
 }
