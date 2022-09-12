@@ -5,16 +5,12 @@ import com.test.seckill.service.GoodsService;
 import com.test.seckill.service.UserService;
 import com.test.seckill.vo.GoodsVo;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 /**
@@ -37,13 +33,8 @@ public class GoodsController {
      * @return
      */
     @RequestMapping("/toList")
-    public String toList(Model model, HttpServletRequest request, HttpServletResponse response, @CookieValue(value = "userTicket", required = false) String ticket) {
+    public String toList(Model model, User user) {
         log.info("跳转商品列表页");
-        if (StringUtils.isEmpty(ticket)) {
-            return "login";
-        }
-
-        User user = userService.getUserByCookie(request, response, ticket);
         model.addAttribute("user", user);
         model.addAttribute("goodsList", goodsService.findGoodsVo());
         return "goodsList";
