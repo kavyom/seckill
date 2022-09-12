@@ -23,4 +23,15 @@ public interface UserService extends IService<User> {
      * @return
      */
     BaseResult login(HttpServletRequest request, HttpServletResponse response, LoginVo loginVo);
+
+    /**
+     * 根据cookie获取用户
+     *
+     * @param request
+     * @param response
+     * @param userTicket
+     * @return
+     */
+    User getUserByCookie(HttpServletRequest request, HttpServletResponse response, String userTicket);
+
 }
