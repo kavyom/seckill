@@ -2,7 +2,6 @@ package com.test.seckill.controller;
 
 import com.test.seckill.entity.User;
 import com.test.seckill.service.GoodsService;
-import com.test.seckill.service.UserService;
 import com.test.seckill.vo.GoodsVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +22,6 @@ public class GoodsController {
 
     @Autowired
     private GoodsService goodsService;
-
-    @Autowired
-    private UserService userService;
 
     /**
      * 跳转商品列表页

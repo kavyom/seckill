@@ -39,12 +39,14 @@ public final class CookieUtil {
         try {
             for (int i = 0; i < cookieList.length; i++) {
                 if (cookieList[i].getName().equals(cookieName)) {
-                    if (isDecoder) {
-                        retValue = URLDecoder.decode(cookieList[i].getValue(), "UTF-8");
-                    } else {
-                        retValue = cookieList[i].getValue();
+                    if (!"undefined".equalsIgnoreCase(cookieList[i].getValue())) {
+                        if (isDecoder) {
+                            retValue = URLDecoder.decode(cookieList[i].getValue(), "UTF-8");
+                        } else {
+                            retValue = cookieList[i].getValue();
+                        }
+                        break;
                     }
-                    break;
                 }
             }
         } catch (UnsupportedEncodingException e) {
