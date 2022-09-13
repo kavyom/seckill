@@ -2,6 +2,7 @@ package com.test.seckill.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.test.seckill.entity.Order;
+import com.test.seckill.entity.User;
 import com.test.seckill.vo.GoodsVo;
 
 /**
@@ -20,5 +21,5 @@ public interface OrderService extends IService<Order> {
      * @param goods
      * @return
      */
-    Order seckill(GoodsVo goods);
+    Order seckill(User user, GoodsVo goods);
 }

@@ -1,18 +1,22 @@
 package com.test.seckill.controller;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.test.seckill.base.BaseResult;
 import com.test.seckill.common.RespBeanEnum;
 import com.test.seckill.entity.Order;
-import com.test.seckill.entity.SeckillOrder;
+import com.test.seckill.entity.User;
 import com.test.seckill.service.GoodsService;
 import com.test.seckill.service.OrderService;
 import com.test.seckill.service.SeckillOrderService;
 import com.test.seckill.vo.GoodsVo;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * <p>
@@ -22,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @author pzh
  * @since 2022-09-09
  */
+@Slf4j
 @Controller
 public class SeckillController {
 
@@ -34,24 +39,26 @@ public class SeckillController {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     @RequestMapping("/doSeckill")
-    public String doSeckill(Model model, Long goodsId) {
+    @ResponseBody
+    public BaseResult doSeckill(Model model, User user, Long goodsId) {
         GoodsVo goods = goodsService.findGoodsVoByGoodsId(goodsId);
-        //判断库存
+        // 判断库存
         if (goods.getStockCount() < 1) {
-            model.addAttribute("errmsg", RespBeanEnum.EMPTY_STOCK.getMessage());
-            return "seckillFail";
+            log.info("用户[{}]抢购失败，库存不足！", user.getId());
+            return BaseResult.error(RespBeanEnum.EMPTY_STOCK);
         }
-        //判断是否重复抢购
-        SeckillOrder seckillOrder = seckillOrderService.getOne(new QueryWrapper<SeckillOrder>().eq("user_id", 1).eq("goods_id", goodsId));
-        if (seckillOrder != null) {
-            model.addAttribute("errmsg", RespBeanEnum.REPEATE_ERROR.getMessage());
-            return "seckillFail";
+        // 判断是否重复抢购
+        String seckillOrderJson = (String) redisTemplate.opsForValue().get("order:" + user.getId() + ":" + goodsId);
+        if (StringUtils.isNotEmpty(seckillOrderJson)) {
+            log.info("用户[{}]抢购失败，不能重复抢购！", user.getId());
+            return BaseResult.error(RespBeanEnum.REPEATE_ERROR);
         }
 
-        Order order = orderService.seckill(goods);
-        model.addAttribute("order", order);
-        model.addAttribute("goods", goods);
-        return "orderDetail";
+        Order order = orderService.seckill(user, goods);
+        return BaseResult.success(order);
     }
 }

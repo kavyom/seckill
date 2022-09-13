@@ -34,6 +34,11 @@ public class GoodsController {
      */
     @RequestMapping("/toList")
     public String toList(Model model, User user) {
+        if (user == null) {
+            return "login";
+        }
+        log.info("当前登录用户[{}]，欢迎！", user.getId());
+
         log.info("跳转商品列表页");
         model.addAttribute("user", user);
         model.addAttribute("goodsList", goodsService.findGoodsVo());
@@ -49,6 +54,7 @@ public class GoodsController {
      */
     @RequestMapping("/toDetail/{goodsId}")
     public String toDetail(Model model, @PathVariable Long goodsId) {
+        log.info("跳转商品详情页，商品Id：{}", goodsId);
         GoodsVo goods = goodsService.findGoodsVoByGoodsId(goodsId);
         model.addAttribute("goods", goods);
         Date startDate = goods.getStartDate();
@@ -72,6 +78,7 @@ public class GoodsController {
         }
         model.addAttribute("secKillStatus",secKillStatus);
         model.addAttribute("remainSeconds",remainSeconds);
+        model.addAttribute("goodsId", goodsId);
         return "goodsDetail";
     }
 }

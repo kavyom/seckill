@@ -47,7 +47,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BusinessException(10001, "用户名不存在");
         }
         //校验密码
-        if (!MD5Util.md5(loginVo.getMobile(), user.getSalt()).equals(user.getPassword())) {
+        if (!MD5Util.md5(loginVo.getPassword(), user.getSalt()).equals(user.getPassword())) {
             throw new BusinessException(10002, "密码不正确");
         }
 
