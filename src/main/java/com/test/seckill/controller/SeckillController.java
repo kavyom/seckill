@@ -15,12 +15,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -46,6 +48,9 @@ public class SeckillController implements InitializingBean {
 
     @Autowired
     private MQSender mqSender;
+
+    @Autowired
+    private RedisScript<Long> redisScript;
 
     /**
      * 初始化，把商品库存数量加载到Redis
@@ -73,8 +78,9 @@ public class SeckillController implements InitializingBean {
             return BaseResult.error(RespBeanEnum.REPEATE_ERROR);
         }
 
-        // 判断库存
-        Long stock = redisTemplate.opsForValue().decrement("stock:" + goodsId);
+        // 预减库存
+//        Long stock = redisTemplate.opsForValue().decrement("stock:" + goodsId);
+        Long stock = (Long) redisTemplate.execute(redisScript, Collections.singletonList("stock:" + goodsId), Collections.EMPTY_LIST);
         if (stock < 0) {
             log.info("用户[{}]抢购失败，库存不足！", user.getId());
             return BaseResult.error(RespBeanEnum.EMPTY_STOCK);
