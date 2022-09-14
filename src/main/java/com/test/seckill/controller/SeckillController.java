@@ -3,6 +3,7 @@ package com.test.seckill.controller;
 
 import cn.hutool.json.JSONUtil;
 import com.test.seckill.base.BaseResult;
+import com.test.seckill.common.AccessLimit;
 import com.test.seckill.common.RespBeanEnum;
 import com.test.seckill.entity.User;
 import com.test.seckill.rabbitmq.MQSender;
@@ -68,6 +69,7 @@ public class SeckillController implements InitializingBean {
         });
     }
 
+    @AccessLimit(second = 5, maxCount = 3)
     @RequestMapping("/doSeckill")
     @ResponseBody
     public BaseResult doSeckill(User user, Long goodsId) {
