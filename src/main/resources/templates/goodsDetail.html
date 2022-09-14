@@ -104,10 +104,8 @@
             },
             success: function (data) {
                 if (data.code == 0) {
-                    layer.msg("恭喜您，秒杀成功！")
-                    setTimeout(function () {
-                        location.reload();
-                    }, 3000);
+                    // 每50ms轮询一次
+                    getResult($("#goodsId").val());
                 } else {
                     layer.msg(data.msg);
                 }
@@ -116,6 +114,40 @@
             }
 
         });
+    }
+
+    // 获取秒杀结果
+    function getResult(goodsId) {
+        g_showLoading();
+        $.ajax({
+            url: "/seckill/getResult",
+            type: "GET",
+            data: {
+                goodsId: goodsId,
+            },
+            success: function (data) {
+                if (data.code == 0) {
+                    var result = data.data;
+                    if (result == 0) {
+                        setTimeout(function () {
+                            getResult(goodsId);
+                        }, 50);
+                    } else if (result > 0) {
+                        layer.msg("恭喜您，秒杀成功！")
+                        setTimeout(function () {
+                            location.reload();
+                        }, 2000);
+                    } else {
+                        layer.msg("对不起，秒杀失败！");
+                    }
+                } else {
+                    layer.msg(data.message);
+                }
+            },
+            error: function () {
+                layer.msg("客户端请求错误");
+            }
+        })
     }
 </script>
 </html>
